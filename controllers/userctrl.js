@@ -15,7 +15,7 @@ const LoginController=async (req,resp)=>{
     const check=await data.find({Email:req.body.Email}).toArray();
     const password=check.map((item)=>{
       return item.Password;
-    });;
+    });
     const isMatch= await bcrypt.compare(req.body.Password,password[0]);
     if(isMatch){
        const token=JWT.sign({id:password[0]},process.env.JWT_SECRET,{expiresIn:'1d'});
