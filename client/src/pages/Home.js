@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import Layout from '../components/Layout';
 
 function Home() {
 
@@ -21,9 +22,10 @@ function Home() {
     getUserData();
   },[]);
   return (
-    <div>
+    <Layout>
       <h1>Welcome to home page</h1>
-    </div>
+    </Layout>
+    
   )
 }
 
