@@ -1,92 +1,124 @@
-const userModel =require('../Models/userModel');
-const bcrypt=require('bcryptjs');
-const connection = require('../config/db');
-const main = require('../Models/userModel');
+const userModel = require("../Models/userModel");
+const bcrypt = require("bcryptjs");
+const connection = require("../config/db");
+const main = require("../Models/userModel");
 
-const JWT=require('jsonwebtoken');
-
-
+const JWT = require("jsonwebtoken");
 
 // login controller
-const LoginController=async (req,resp)=>{
-
+const LoginController = async (req, resp) => {
   try {
-    const data=await connection();
-    const check=await data.find({Email:req.body.Email}).toArray();
-    const password=check.map((item)=>{
-      return item.Password;
-    });
-    const isMatch= await bcrypt.compare(req.body.Password,password[0]);
-    if(isMatch){
-       const token=JWT.sign({id:password[0]},process.env.JWT_SECRET,{expiresIn:'1d'});
-      resp.status(200).send({message:'User login Successfully',succuss:true,token});
+    const data = await connection();
+    const user= await userModel.findOne({ Email: req.body.Email });
+    if (!user) {
+      return resp
+        .status(200)
+        .send({ message: "user not found", success: false });
+    }
+    const isMatch =  bcrypt.compare(req.body.Password, user.Password);
+    if (!isMatch) {
+      return resp
+        .status(200)
+        .send({ message: "Invlid EMail or Password", success: false });
     }
     else{
-      resp.status(400).send({message:'User not found',succuss:false});
-    }
-    
-  } catch (error) {
-      console.log(error);
-      resp.status(500).send({message:`Error occured${error.message}`});
-  }
-}
 
-// Register Controller
-const RegisterController = async (req,resp)=>{
-const data=await connection();
-console.log(req.body.Email)
-  try {
-     const existingUser= await data.find({Email:req.body.Email}).toArray();
-     if(existingUser.length!=0){
-         return resp.status(200).send({message:'User Already register',succuss:false});
-     }
-    else{
-      const Password=req.body.Password;
-      const salt=await bcrypt.genSalt(10);
-      const hashedPassword=await bcrypt.hash(Password,salt);
-      req.body.Password=hashedPassword;
-    data.insertOne(req.body);
-    resp.status(200).send({message:"User Register Sucessfully",succuss:true});
-}
+      const token = JWT.sign({id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
+      resp.status(200).send({ message: "Login Success", success: true, token });
+    }
   } catch (error) {
     console.log(error);
-    resp.status(500).send({succuss:false,message:error.message});
+    resp.status(500).send({ message: `Error occured${error.message}` });
   }
- 
-}
+};
+
+// Register Controller
+const RegisterController = async (req, resp) => {
+  const data = await connection();
+  console.log(req.body.Email);
+  try {
+    const existingUser = await userModel.findOne({ Email: req.body.Email });
+    if (existingUser) {
+      return resp
+        .status(200)
+        .send({ message: "User Already register", succuss: false });
+    } else {
+      const Password = req.body.Password;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(Password, salt);
+      req.body.Password = hashedPassword;
+      const newUser = new userModel(req.body);
+      await newUser.save();
+      // data.insertOne(req.body);
+      resp
+        .status(200)
+        .send({ message: "User Register Sucessfully", succuss: true });
+    }
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({ succuss: false, message: error.message });
+  }
+};
 
 // Use for authetication
 
-const authController =async (req,res)=>{
-  try {
-    const data=await connection();
-    const user= await data.find({Email:res.body.Email}).toArray();
-    console.log(user);
-    console.log(user.Name);
-  
-    if(user.length==0){
-      res.status(200).send({
-        message:'Authetication Failed',
-        succuss:false
-      })
-    } 
-    else{
-      res.status(200).send({
-        succuss:true,
-        data:{
-          Name:user.Name,
-          Email:user.Email
-        }
-      })
-    }
+// const authController = async (req, res) => {
+//   try {
+//     const user = await userModel.findById({ _id: req.body.userId });
+//     console.log(req.body.userId);
+//      console.log(user);
+//     user.Password=undefined;
+//     if (!user) {
+//       res.status(200).send({
+//         message: "User Not found",
+//         succuss: false,
+//       });
+//     } else {
+//       res.status(200).send({
+//         succuss: true,
+//         data: {
+//           succuss:true,
+//           data:user,
+//         },
+//       });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       message: "auth error",
+//       succuss: false,
+//     });
+//   }
+// };
 
-    
+
+const authController = async (req, res) => {
+  console.log("authetication function called");
+  try {
+    const user = await userModel.findById({ _id: req.body.userId });
+    user.Password = undefined;
+    if (!user) {
+      return res.status(200).send({
+        message: "user not found",
+        success: false,
+      });
+    } else {
+      res.status(200).send({
+        success: true,
+        data: user,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message:'auth error',
-      succuss:false
-    })
+      message: "auth error",
+      success: false,
+      error,
+    });
   }
-}
-module.exports={LoginController,RegisterController,authController};
+};
+
+
+module.exports = { LoginController, RegisterController, authController };

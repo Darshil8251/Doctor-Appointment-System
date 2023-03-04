@@ -1,27 +1,47 @@
-export const SidebarMenu = [
+export const userMenu = [
   {
     name: "Home",
-    Path: "/",
+    path: "/",
     icon: "fa-solid fa-house",
   },
   {
     name: "Appointments",
-    Path: "/appointment",
+    path: "/appointments",
     icon: "fa-solid fa-list",
   },
   {
     name: "Apply Doctor",
-    Path: "/apply-doctor",
+    path: "/apply-doctor",
     icon: "fa-solid fa-user-doctor",
   },
   {
-    name:'Profile',
-    Path:'/profile',
-    icon:'fa-solid fa-user'
+    name: "Profile",
+    path: "/profile",
+    icon: "fa-solid fa-user",
+  },
+];
+
+// admin menu
+export const adminMenu = [
+  {
+    name: "Home",
+    path: "/",
+    icon: "fa-solid fa-house",
+  },
+
+  {
+    name: "Doctors",
+    path: "/doctors",
+    icon: "fa-solid fa-user-doctor",
   },
   {
-    name:'Logout',
-    path:'/logout',
-    icon:'fa-solid fa-right-from-bracket'
+    name: "Users",
+    path: "/users",
+    icon: "fa-solid fa-user",
+  },
+  {
+    name: "Profile",
+    path: "/profile",
+    icon: "fa-solid fa-user",
   },
 ];

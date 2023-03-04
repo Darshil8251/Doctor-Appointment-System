@@ -1,15 +1,27 @@
-const express = require('express');
-const connection = require('./config/db');
-const { RegisterController, LoginController } = require('./controllers/userctrl');
+const express = require("express");
+const colors = require("colors");
+const moragan = require("morgan");
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 const cors = require('cors');
 
-const app=express();
-app.use(express.json());
-// it is use for wentoken generation 
-require("dotenv").config();
-// use for solving cors error 
-app.use(cors());
+//dotenv conig
+dotenv.config();
 
+//mongodb connection
+
+
+//rest obejct
+const app = express();
+
+//middlewares
+app.use(express.json());
+app.use(moragan("dev"));
+app.use(cors());
+//routes
 app.use("/api/v1/user", require("./routes/userRouter"));
 
-app.listen(4000);
+//port
+
+//listen port
+app.listen(4000)
