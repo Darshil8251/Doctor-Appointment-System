@@ -1,38 +1,3 @@
-// import React, { useEffect } from "react";
-// import Layout from "../components/Layout";
-// import axios from "axios";
-
-// function Home() {
-//   // login user data
-//   const getUserData = async () => {
-//     try {
-//       const res = await axios.post(
-//         "/api/v1/user/getUserData",
-//         {},
-//         {
-//           headers: {
-//             Authorization: "Bearer " + localStorage.getItem("token"),
-//           },
-//         }
-//       );
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getUserData();
-//   }, []);
-
-//   return (
-//     <Layout>
-//       <h1>Welcome to home page</h1>
-//     </Layout>
-//   );
-// }
-
-// export default Home;
-
 
 import React, { useEffect } from "react";
 import axios from "axios";
