@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
 import axios from "axios";
+import moment from "moment";
 
 function ApplyDoctor() {
   const { user } = useSelector((state) => state.user);
@@ -19,7 +20,11 @@ function ApplyDoctor() {
       dispatch(showLoading());
       const res = await axios.post(
         "http://localhost:4000/api/v1/user/apply-doctor",
-        { ...values, userId: user._id },
+        {
+          ...values,
+          userId: user._id,
+         
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -28,7 +33,7 @@ function ApplyDoctor() {
       );
       dispatch(hideLoading());
       if (res.data.success) {
-        message.success("your request send successfully");
+        message.success(res.data.message);
         navigate("/");
       } else {
         message.error(res.data.success);

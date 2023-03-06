@@ -9,6 +9,7 @@ import ApplyDoctor from "./pages/ApplyDoctor";
 import Notification from "./pages/Notification";
 import Doctors from "./pages/admin/Doctors";
 import Users from "./pages/admin/Users";
+import Profile from "./pages/Doctor/Profile";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
               </ProtectedRoutes>
             }
           />
-           <Route
+          {/* it for admin routes */}
+          <Route
             path="/apply-doctor"
             element={
               <ProtectedRoutes>
@@ -31,11 +33,11 @@ function App() {
               </ProtectedRoutes>
             }
           />
-             <Route
+          <Route
             path="/admin/doctors"
             element={
               <ProtectedRoutes>
-                <Doctors/>
+                <Doctors />
               </ProtectedRoutes>
             }
           />
@@ -43,11 +45,30 @@ function App() {
             path="/admin/Users"
             element={
               <ProtectedRoutes>
-                <Users/>
+                <Users />
               </ProtectedRoutes>
             }
           />
-           <Route
+          <Route
+            path="/admin/Users"
+            element={
+              <ProtectedRoutes>
+                <Users />
+              </ProtectedRoutes>
+            }
+          />
+
+          {/* user route */}
+
+          <Route
+            path="/doctor/profile/:id"
+            element={
+              <ProtectedRoutes>
+                <Profile/>
+              </ProtectedRoutes>
+            }
+          />
+          <Route
             path="/notification"
             element={
               <ProtectedRoutes>

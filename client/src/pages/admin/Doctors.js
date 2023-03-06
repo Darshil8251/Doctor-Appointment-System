@@ -58,7 +58,7 @@ function Doctors() {
       dataIndex: "name",
       render: (text, record) => (
         <span>
-        {record.userId}
+          {record.userId}
           {record.firstName} {record.lastName}
         </span>
       ),

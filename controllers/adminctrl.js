@@ -80,7 +80,7 @@ const changeAccountStatusController = async (req, res) => {
       message: `Your Doctor Account Request Has ${status} `,
       onClickPath: "/notification",
     });
-    user.isDoctor === "approved" ? true : false;
+    user.isDoctor = true;
     await user.save();
     res.status(201).send({
       success: true,

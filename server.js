@@ -26,5 +26,8 @@ app.use("/api/v1/user", require("./routes/userRouter"));
 app.use('/api/v1/admin',require('./routes/adminRoutes'));
 
 
+// it is for doctor
+app.use('/api/v1/doctor',require('./routes/doctorRoutes'));
+
 //listen port
 app.listen(4000)
