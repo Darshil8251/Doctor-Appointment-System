@@ -91,7 +91,7 @@ const authController = async (req, res) => {
 
 const applyDoctorController = async (req, res) => {
   try {
-    const newDoctor = await doctorModel({ ...req.body, status: "pending" });
+    const newDoctor = await doctorModel({ ...req.body, status: "pending",userID:req.body.userId});
     await newDoctor.save();
     const adminUser = await userModel.findOne({ isAdmin: true });
     const notification = adminUser.notification;

@@ -14,6 +14,8 @@ function ApplyDoctor() {
   //handle form
   const handleFinish = async (values) => {
     try {
+      console.log(user._id);
+      console.log(values);
       dispatch(showLoading());
       const res = await axios.post(
         "http://localhost:4000/api/v1/user/apply-doctor",
