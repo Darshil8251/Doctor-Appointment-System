@@ -91,7 +91,11 @@ const authController = async (req, res) => {
 
 const applyDoctorController = async (req, res) => {
   try {
-    const newDoctor = await doctorModel({ ...req.body, status: "pending",userID:req.body.userId});
+    const newDoctor = await doctorModel({
+      ...req.body,
+      status: "pending",
+      userID: req.body.userId,
+    });
     await newDoctor.save();
     const adminUser = await userModel.findOne({ isAdmin: true });
     const notification = adminUser.notification;
@@ -149,21 +153,41 @@ const getAllNotificationController = async (req, resp) => {
 const deleteAllNotificationController = async (req, resp) => {
   console.log("delete all notification called");
   try {
-    const user=await userModel.findOne({_id:req.body.userId});
-    user.notification=[];
-    user.seenNotification=[];
-    const updateUser=await user.save();
-    updateUser.Password=undefined;
+    const user = await userModel.findOne({ _id: req.body.userId });
+    user.notification = [];
+    user.seenNotification = [];
+    const updateUser = await user.save();
+    updateUser.Password = undefined;
     resp.status(200).send({
-      success:true,
-      message:'Notification Deleted Successfully',
-      data:updateUser,
+      success: true,
+      message: "Notification Deleted Successfully",
+      data: updateUser,
     });
   } catch (error) {
     console.log(error);
     resp.status(500).send({
       success: false,
       message: "Unable to delete all notification",
+    });
+  }
+};
+
+// GET ALL DOC
+
+const getAllDoctorsController = async (req, resp) => {
+  try {
+    const doctor = await doctorModel.find({ status: "approved" });
+    resp.status(200).send({
+      success: true,
+      message: "Successfully Fetch Data",
+      data: doctor,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({
+      success: false,
+      message: "Failed to fetch",
+      error,
     });
   }
 };
@@ -175,4 +199,5 @@ module.exports = {
   applyDoctorController,
   getAllNotificationController,
   deleteAllNotificationController,
+  getAllDoctorsController,
 };
