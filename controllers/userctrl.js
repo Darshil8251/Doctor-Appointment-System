@@ -5,6 +5,8 @@ const main = require("../Models/userModel");
 const doctorModel = require("../Models/doctorModels");
 
 const JWT = require("jsonwebtoken");
+const appoinementModel = require("../Models/appointmentModels");
+const { use } = require("../routes/userRouter");
 
 // login controller
 const LoginController = async (req, resp) => {
@@ -192,6 +194,33 @@ const getAllDoctorsController = async (req, resp) => {
   }
 };
 
+// It is use for book appointment
+const bookAppointment = async (req, resp) => {
+  try {
+    req.body.status = "pending";
+    const newAppointment = new appoinementModel(req.body);
+    await newAppointment.save();
+    const user = await userModel.findOne({ _id: req.body.doctorInfo.userID});
+    user.notification.push({
+      type: "New-appointment-request",
+      message: ` A nEw Appointment Request from ${req.body.userId.name}`,
+      onClickPath: "/user/appointment",
+    });
+    await user.save();
+    resp.status(200).send({
+      success: true,
+      message: "Appointment Book Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({
+      success: false,
+      message: "Error while Booking Appoinement",
+      error,
+    });
+  }
+};
+
 module.exports = {
   LoginController,
   RegisterController,
@@ -200,4 +229,5 @@ module.exports = {
   getAllNotificationController,
   deleteAllNotificationController,
   getAllDoctorsController,
+  bookAppointment,
 };
