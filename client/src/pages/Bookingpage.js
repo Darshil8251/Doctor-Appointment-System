@@ -5,7 +5,7 @@ import { DatePicker, message, TimePicker } from "antd";
 import { Params, useParams } from "react-router-dom";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import {showLoading,hideLoading} from '../redux/features/alertSlice'
+import { showLoading, hideLoading } from "../redux/features/alertSlice";
 
 function Bookingpage() {
   const params = useParams();
@@ -14,7 +14,7 @@ function Bookingpage() {
   const [date, setDate] = useState();
   const [time, setTime] = useState();
   const [isAvailable, setIsAvailable] = useState();
- const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   const getDoctor = async () => {
     try {
@@ -41,6 +41,10 @@ function Bookingpage() {
   // It use for booking
   const handleBooking = async () => {
     try {
+      setIsAvailable(true);
+      if (!date && !time) {
+        return alert("Date and Time Required");
+      }
       dispatch(showLoading());
       const res = await axios.post(
         "http://localhost:4000/api/v1/user/book-appointment",
@@ -68,7 +72,32 @@ function Bookingpage() {
     }
   };
 
+  // It is use for check availibality of doctor
 
+  const handleAvailability = async () => {
+    try {
+      dispatch(showLoading());
+      const res = await axios.post(
+        "http://localhost:4000/api/v1/user/booking-availability",
+        { doctorId: params.doctorId, date, time },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(hideLoading());
+      if (res.data.success) {
+        setIsAvailable(true);
+        message.success(res.data.message);
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      dispatch(hideLoading());
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getDoctor();
@@ -76,44 +105,47 @@ function Bookingpage() {
 
   return (
     <Layout>
-      <h3 className="m-2">Book appointment</h3>
-
-      <div
-        className="container"
-        style={{ width: "415px", border: "2px solid black" }}
-      >
+      <h3>Booking Page</h3>
+      <div className="container m-2">
         {doctor && (
-          <div className="text-center">
+          <div>
             <h4>
               Dr.{doctor.firstName} {doctor.lastName}
             </h4>
-            <h4>Doctor fees per Consultation:{doctor.fessPerConsultation}</h4>
+            <h4>Fees : {doctor.feesPerCunsaltation}</h4>
             <h4>
-              Timing:{doctor.timings[0]}-{doctor.timings[1]}
+              Timings : {doctor.timings && doctor.timings[0]} -{" "}
+              {doctor.timings && doctor.timings[1]}{" "}
             </h4>
-            <div className="d-flex flex-column">
+            <div className="d-flex flex-column w-50">
               <DatePicker
+                aria-required={"true"}
+                className="m-2"
                 format="DD-MM-YYYY"
-                onChange={(value) =>
-                  setDate(moment(value).format("DD-MM-YYYY"))
-                }
+                onChange={(value) => {
+                  setDate(moment(value).format("DD-MM-YYYY"));
+                }}
               />
-              <br />
               <TimePicker
+                aria-required={"true"}
                 format="HH:mm"
-                onChange={(value) =>
-                  setTime([
-                    moment(value[0]).format("HH:mm"),
-                  ])
-                }
+                className="mt-3"
+                onChange={(value) => {
+                  setTime(moment(value).format("HH:mm"));
+                }}
               />
-              <br />
-              <button className="btn btn-primary">Check availability</button>
-              <br />
-              <button className="btn btn-dark" onClick={handleBooking}>
-                Book Now
+
+              <button
+                className="btn btn-primary mt-2"
+                onClick={handleAvailability}
+              >
+                Check Availability
               </button>
-              <br />
+              {!isAvailable && (
+                <button className="btn btn-dark mt-2" onClick={handleBooking}>
+                  Book Now
+                </button>
+              )}
             </div>
           </div>
         )}

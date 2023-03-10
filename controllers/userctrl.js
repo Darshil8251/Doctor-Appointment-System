@@ -7,6 +7,7 @@ const doctorModel = require("../Models/doctorModels");
 const JWT = require("jsonwebtoken");
 const appoinementModel = require("../Models/appointmentModels");
 const { use } = require("../routes/userRouter");
+const moment = require("moment");
 
 // login controller
 const LoginController = async (req, resp) => {
@@ -197,10 +198,12 @@ const getAllDoctorsController = async (req, resp) => {
 // It is use for book appointment
 const bookAppointment = async (req, resp) => {
   try {
+    req.body.date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    req.body.time = moment(req.body.time, "HH:mm").toISOString();
     req.body.status = "pending";
     const newAppointment = new appoinementModel(req.body);
     await newAppointment.save();
-    const user = await userModel.findOne({ _id: req.body.doctorInfo.userID});
+    const user = await userModel.findOne({ _id: req.body.doctorInfo.userID });
     user.notification.push({
       type: "New-appointment-request",
       message: ` A nEw Appointment Request from ${req.body.userId.name}`,
@@ -221,6 +224,48 @@ const bookAppointment = async (req, resp) => {
   }
 };
 
+// CHECK AVAILABILITY OF DOCTOR
+
+const bookingAvailabilityController = async (req, resp) => {
+  try {
+    const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    const fromTime = moment(req.body.time, "HH:mm")
+      .subtract(1, "hours")
+      .toISOString();
+    const toTime = moment(req.body.time, "HH:mm").add(1, "hours").toISOString();
+    const doctorId = req.body.doctorId;
+    console.log(toTime);
+    console.log();
+    const appointment = await appoinementModel.find({
+      doctorId,
+      date,
+      time: {
+        $gte: fromTime,
+        $lte: toTime,
+      },
+    });
+    console.log(appointment);
+    if (appointment.length == 0) {
+      return resp.status(200).send({
+        success: true,
+        message: "Slot Is Available",
+      });
+    } else {
+      return resp.status(200).send({
+        success: false,
+        message: "Sorry Slot Is not Available",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({
+      success: false,
+      message: "Error In check Availability",
+      error,
+    });
+  }
+};
+
 module.exports = {
   LoginController,
   RegisterController,
@@ -230,4 +275,5 @@ module.exports = {
   deleteAllNotificationController,
   getAllDoctorsController,
   bookAppointment,
+  bookingAvailabilityController,
 };
