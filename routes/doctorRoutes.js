@@ -3,6 +3,8 @@ const {
     getDoctorInfoController,
     updateProfile,
     getDoctorByIdController,  
+    doctorAppoinementController,
+    updateStatusController
 
 } = require("../controllers/doctorctrl");
 const authMiddleware  = require("../Middleware/authmiddleware");
@@ -19,6 +21,14 @@ routes.post('/updateProfile',authMiddleware,updateProfile);
 //POST GET SINGLE DOCTOR
 
 routes.post('/getDoctorById',authMiddleware,getDoctorByIdController);
+
+
+// GET DOC APPOINTMENT
+routes.get('/doctor-appointment',authMiddleware,doctorAppoinementController);
+
+// Update appointment status
+
+routes.post('/update-status',authMiddleware,updateStatusController);
 
 
 module.exports = routes;
