@@ -266,6 +266,25 @@ const bookingAvailabilityController = async (req, resp) => {
   }
 };
 
+const userAppointmentController = async (req, resp) => {
+  try {
+    const appointment = await appoinementModel.find({
+      userId: req.body.userId,
+    });
+    resp.status(200).send({
+      success: true,
+      message: "User Appointment Fetch Successfully",
+      data: appointment,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({
+      success: false,
+      message: "Error In User Appointment",
+      error,
+    });
+  }
+};
 module.exports = {
   LoginController,
   RegisterController,
@@ -276,4 +295,5 @@ module.exports = {
   getAllDoctorsController,
   bookAppointment,
   bookingAvailabilityController,
+  userAppointmentController,
 };

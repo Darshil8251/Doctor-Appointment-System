@@ -11,6 +11,7 @@ import Doctors from "./pages/admin/Doctors";
 import Users from "./pages/admin/Users";
 import Profile from "./pages/Doctor/Profile";
 import Bookingpage from "./pages/Bookingpage";
+import Appointment from "./pages/Appointment";
 
 function App() {
   return (
@@ -82,6 +83,14 @@ function App() {
             element={
               <ProtectedRoutes>
                 <Notification />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedRoutes>
+                <Appointment />
               </ProtectedRoutes>
             }
           />
