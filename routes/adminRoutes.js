@@ -4,7 +4,7 @@ const {
   getAllDoctorsController,
  changeAccountStatusController,
  
-} = require("../controllers/adminCtrl");
+} = require("../controllers/adminctrl");
 const authMiddleware = require("../Middleware/authmiddleware");
 const router=express.Router();
 
