@@ -1,7 +1,7 @@
 const { Mongoose, default: mongoose } = require("mongoose");
 mongoose.set('strictQuery', false);
 
-const url = "mongodb://localhost:27017/doc_app";
+const url = "mongodb+srv://Darshil8251:Darshil8251@cluster0.ybuywdn.mongodb.net/";
 const dbname='doc_app';
 const connection = async () => {
 //  let client =new MongoClient(url);
